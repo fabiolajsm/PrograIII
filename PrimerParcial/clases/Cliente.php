@@ -4,9 +4,10 @@ require 'ManejadorArchivos.php';
 class Cliente {
     private $clientes;
     private $manejadorArchivos;
+    private $archivoHoteles = './datos/hoteles.json';
 
     public function __construct() {
-        $this->manejadorArchivos = new ManejadorArchivos('./datos/hoteles.json');
+        $this->manejadorArchivos = new ManejadorArchivos($this->archivoHoteles);
         $this->clientes = $this->manejadorArchivos->leer();
     }
 
@@ -22,27 +23,25 @@ class Cliente {
         $telefono = $datos["telefono"];
 
         $clienteExistente = null;
-        if (!empty($clientes)) {
+        if (!empty($this->clientes)) {
             foreach ($this->clientes as &$cliente) {
                 if ($cliente["nombre"] == $nombre && $cliente["tipoCliente"] == $tipoCliente) {
                     $clienteExistente = $cliente;
+                    $cliente["nombre"] = $nombre;          
+                    $cliente["apellido"] = $apellido;
+                    $cliente["tipoDocumento"] = $tipoDocumento;          
+                    $cliente["nroDocumento"] = $nroDocumento;          
+                    $cliente["email"] = $email;          
+                    $cliente["pais"] = $pais;          
+                    $cliente["ciudad"] = $ciudad;          
+                    $cliente["telefono"] = $telefono;
                     break;
                 }
             } 
         }
+        $clienteID = $clienteExistente !== null ? $clienteExistente["id"] : mt_rand(100000, 999999);
 
-        $clienteID = $clienteExistente ? $clienteExistente["id"] : mt_rand(100000, 999999);
-
-        if ($clienteExistente) {
-            $clienteExistente["nombre"] = $nombre;
-            $clienteExistente["apellido"] = $apellido;
-            $clienteExistente["tipoDocumento"] = $tipoDocumento;
-            $clienteExistente["nroDocumento"] = $nroDocumento;
-            $clienteExistente["email"] = $email;
-            $clienteExistente["pais"] = $pais;
-            $clienteExistente["ciudad"] = $ciudad;
-            $clienteExistente["telefono"] = $telefono;
-        } else {
+        if (!$clienteExistente) {
             $nuevoCliente = [
                 "id" => $clienteID,
                 "nombre" => $nombre,
