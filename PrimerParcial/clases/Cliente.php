@@ -22,26 +22,18 @@ class Cliente {
         $ciudad = $datos["ciudad"];
         $telefono = $datos["telefono"];
 
-        $clienteExistente = null;
+        $noExisteCliente = true;
         if (!empty($this->clientes)) {
-            foreach ($this->clientes as &$cliente) {
+            foreach ($this->clientes as $cliente) {
                 if ($cliente["nombre"] == $nombre && $cliente["tipoCliente"] == $tipoCliente) {
-                    $clienteExistente = $cliente;
-                    $cliente["nombre"] = $nombre;          
-                    $cliente["apellido"] = $apellido;
-                    $cliente["tipoDocumento"] = $tipoDocumento;          
-                    $cliente["nroDocumento"] = $nroDocumento;          
-                    $cliente["email"] = $email;          
-                    $cliente["pais"] = $pais;          
-                    $cliente["ciudad"] = $ciudad;          
-                    $cliente["telefono"] = $telefono;
-                    break;
+                    $noExisteCliente = false;
+                    return 'Error: Ya existe el cliente que quiere dar de alta.';
                 }
             } 
         }
-        $clienteID = $clienteExistente !== null ? $clienteExistente["id"] : mt_rand(100000, 999999);
+        $clienteID = mt_rand(100000, 999999);
 
-        if (!$clienteExistente) {
+        if ($noExisteCliente) {
             $nuevoCliente = [
                 "id" => $clienteID,
                 "nombre" => $nombre,
