@@ -20,7 +20,7 @@ class Cliente
         $tipoDocumento = $datos["tipoDocumento"];
         $nroDocumento = $datos["nroDocumento"];
         $email = $datos["email"];
-        $tipoCliente = $datos["tipoCliente"]; // individual o corporativo
+        $tipo = $datos["tipo"]; // individual o corporativo
         $pais = $datos["pais"];
         $ciudad = $datos["ciudad"];
         $telefono = $datos["telefono"];
@@ -29,7 +29,7 @@ class Cliente
         $clienteID = 1;
         if (!empty($this->clientes)) {
             foreach ($this->clientes as $cliente) {
-                if ($cliente["nombre"] == $nombre && $cliente["apellido"] == $apellido && $cliente["tipoCliente"] == $tipoCliente) {
+                if ($cliente["nombre"] == $nombre && $cliente["apellido"] == $apellido && $cliente["tipo"] == $tipo) {
                     $noExisteCliente = false;
                     return 'Error: Ya existe el cliente que quiere dar de alta.';
                 }
@@ -45,7 +45,7 @@ class Cliente
                 "tipoDocumento" => $tipoDocumento,
                 "nroDocumento" => $nroDocumento,
                 "email" => $email,
-                "tipoCliente" => $tipoCliente,
+                "tipo" => $tipo,
                 "pais" => $pais,
                 "ciudad" => $ciudad,
                 "telefono" => $telefono
@@ -54,7 +54,7 @@ class Cliente
         }
 
         if ($this->manejadorArchivos->guardar($this->clientes)) {
-            $imagenID = $idFormateado . $tipoCliente;
+            $imagenID = $idFormateado . $tipo;
             $carpetaImagenes = './datos/ImagenesDeClientes/2023/';
             $rutaImagen = $carpetaImagenes . strtoupper($imagenID) . '.jpg';
             if ($this->manejadorArchivos->subirImagen($rutaImagen)) {
@@ -66,18 +66,17 @@ class Cliente
             return "Error: No se pudo registrar u actualizar el cliente.";
         }
     }
-    public function consultarCliente($tipoCliente, $nroCliente)
+    public function consultar($tipo, $nroCliente)
     {
         if (!empty($this->clientes)) {
             $encontrado = false;
             foreach ($this->clientes as $cliente) {
-                if ($cliente["tipoCliente"] == $tipoCliente && $cliente["nroDocumento"] == $nroCliente) {
+                if ($cliente["tipo"] == $tipo && $cliente["id"] == $nroCliente) {
                     $encontrado = true;
-                    return [
-                        "pais" => $cliente["pais"],
-                        "ciudad" => $cliente["ciudad"],
-                        "telefono" => $cliente["telefono"]
-                    ];
+                    return "Pais: {$cliente['pais']}. Ciudad: {$cliente['ciudad']}. Teléfono: {$cliente['telefono']}";
+                }
+                if ($cliente["tipo"] !== $tipo && $cliente["id"] == $nroCliente) {
+                    return "Tipo de cliente incorrecto";
                 }
             }
             if (!$encontrado) {
