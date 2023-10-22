@@ -92,11 +92,13 @@ class Reserva
     {
         $numeroCliente = $datos["numeroCliente"];
         $idReserva = $datos["idReserva"];
+        $tipoCliente = $datos["tipoCliente"];
 
         $cliente = new Cliente();
         $reserva = $this->getReservaById($idReserva);
+        $clienteIngresado = $cliente->getClienteById($numeroCliente);
 
-        if ($cliente->getClienteById($numeroCliente) && $reserva) {
+        if ($clienteIngresado && $clienteIngresado["tipo"] == $tipoCliente && $reserva) {
             $reserva["cancelada"] = true;
             if ($this->actualizarReserva($reserva)) {
                 return 'Reserva cancelada con éxito.';

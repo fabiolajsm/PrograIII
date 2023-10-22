@@ -6,6 +6,7 @@
     "fechaEntrada": "12/12/2023",
     "fechaSalida": "11/12/2024",
     "tipoHabitacion": "Simple",
-    "total": "100"
+    "total": "100",
+    "cancelada": true
   }
 ]
