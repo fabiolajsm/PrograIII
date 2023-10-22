@@ -1,9 +1,6 @@
 <?php
 require './clases/Cliente.php';
-
-$cliente = new Cliente();
-$data = json_decode(file_get_contents("php://input"));
-echo $data . 'wdasd';
+$data = json_decode(file_get_contents("php://input"), true);
 
 if (empty($data['numeroCliente']) || empty($data['nombre']) || empty($data['apellido']) || empty($data['tipoDocumento']) || empty($data['nroDocumento']) || empty($data['email']) || empty($data['tipo']) || empty($data['pais']) || empty($data['ciudad']) || empty($data['telefono'])) {
     echo "Error: tiene que ingresar todos los campos requeridos.";
@@ -17,6 +14,7 @@ if ($data['tipo'] !== "individual" && $data['tipo'] !== "corporativo") {
     echo "Error: El Tipo de Cliente debe ser 'individual' o 'corporativo'.";
     return;
 }
+$cliente = new Cliente();
 $resultado = $cliente->modificar($data);
 echo $resultado;
 ?>

@@ -96,23 +96,27 @@ class Cliente
             return "No existen clientes registrados.";
         }
     }
-    //revisar
     public function modificar($datos)
     {
         $numeroCliente = $datos["numeroCliente"];
         $tipo = $datos["tipo"];
 
         if (!empty($this->clientes)) {
-            foreach ($this->clientes as $cliente) {
+            foreach ($this->clientes as &$cliente) {
                 if ($cliente["id"] == $numeroCliente && $cliente["tipo"] == $tipo) {
                     foreach ($datos as $key => $value) {
-                        $cliente[$key] = $value;
+                        if ($key !== "numeroCliente" && $key !== "id") {
+                            $cliente[$key] = $value;
+                        }
                     }
-                    return 'Modificacion exitosa.';
                 }
             }
         }
-        return 'Error: No existe el cliente que intenta modificar.';
+        if ($this->manejadorArchivos->guardar($this->clientes)) {
+            return 'Modificacion exitosa.';
+        } else {
+            return 'Error: No existe el cliente que intenta modificar.';
+        }
     }
 }
 ?>

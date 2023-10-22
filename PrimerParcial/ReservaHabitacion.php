@@ -1,8 +1,6 @@
 <?php
 require './clases/Reserva.php';
 
-$reserva = new Reserva();
-
 if (empty($_POST['tipoCliente']) || empty($_POST['numeroCliente']) || empty($_POST['fechaEntrada']) || empty($_POST['fechaSalida']) || empty($_POST['tipoHabitacion']) || empty($_POST['total'])) {
     echo "Error: tiene que ingresar todos los campos requeridos.";
     return;
@@ -23,6 +21,7 @@ if (!is_numeric($_POST['total']) || $_POST['total'] <= 0) {
     echo "El campo Total debe ser un número mayor a 0.";
     return;
 }
+$reserva = new Reserva();
 $resultado = $reserva->reservarHabitacion($_POST);
 echo $resultado;
 ?>
