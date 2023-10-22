@@ -13,6 +13,16 @@ class Reserva
         $this->manejadorArchivos = new ManejadorArchivos($this->archivo);
         $this->reservas = $this->manejadorArchivos->leer();
     }
+
+    public function getReservaById($id)
+    {
+        foreach ($this->reservas as $reserva) {
+            if ($reserva['id'] == $id) {
+                return $reserva;
+            }
+        }
+        return null;
+    }
     public function reservarHabitacion($datos)
     {
         $numeroCliente = $datos["numeroCliente"];
@@ -30,6 +40,7 @@ class Reserva
             }
             $nuevaReserva = [
                 "id" => $reservaID,
+                "numeroCliente" => $numeroCliente,
                 "tipoCliente" => $tipoCliente,
                 "fechaEntrada" => $fechaEntrada,
                 "fechaSalida" => $fechaSalida,
@@ -42,8 +53,10 @@ class Reserva
                 $imagenOrigen = 'reservaExitosa.jpg';
                 $carpetaDestino = './datos/ImagenesDeReservas2023';
                 $nuevoNombre = $tipoCliente . strval($numeroCliente) . strval($reservaID) . ".jpg";
-                $rutaCompletaDestino = $carpetaDestino . $nuevoNombre;
-
+                $rutaCompletaDestino = $carpetaDestino . '/' . strtoupper($nuevoNombre);
+                if (!file_exists($carpetaDestino)) {
+                    mkdir($carpetaDestino, 0777, true);
+                }
                 if (copy($imagenOrigen, $rutaCompletaDestino)) {
                     return "Reserva registrada exitosamente.";
                 } else {
@@ -54,6 +67,44 @@ class Reserva
             }
         } else {
             return "Error: El cliente no existe";
+        }
+    }
+    /**6- CancelarReserva.php: (por POST) se recibe el Tipo de Cliente, Nro de Cliente, y el Id de Reserva a cancelar.
+     *  Si el cliente existe en hoteles.json y la reserva en reservas.json, 
+     * se marca como cancelada en el registro de reservas. Si el cliente o la reserva no existen, informar el tipo de error.  */
+    public function actualizarReserva($reservaActualizada)
+    {
+        $idReserva = $reservaActualizada['id'];
+        foreach ($this->reservas as $clave => $reserva) {
+            if ($reserva['id'] == $idReserva) {
+                $this->reservas[$clave] = $reservaActualizada;
+                break;
+            }
+        }
+        if ($this->manejadorArchivos->guardar($this->reservas)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    function cancelar($datos)
+    {
+        $numeroCliente = $datos["numeroCliente"];
+        $idReserva = $datos["idReserva"];
+
+        $cliente = new Cliente();
+        $reserva = $this->getReservaById($idReserva);
+
+        if ($cliente->getClienteById($numeroCliente) && $reserva) {
+            $reserva["cancelada"] = true;
+            if ($this->actualizarReserva($reserva)) {
+                return 'Reserva cancelada con éxito.';
+            } else {
+                return 'Error al cancelar la reserva';
+            }
+        } else {
+            return 'Error: Cliente o reserva no encontrados.';
         }
     }
 }
