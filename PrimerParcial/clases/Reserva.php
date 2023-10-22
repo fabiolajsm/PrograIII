@@ -38,12 +38,21 @@ class Reserva
             if (!empty($this->reservas)) {
                 $reservaID = intval(end($this->reservas)['id']) + 1;
             }
+            try {
+                $fechaEntradaObj = new DateTime($fechaEntrada);
+                $fechaSalidaObj = new DateTime($fechaSalida);
+            } catch (Exception $e) {
+                return "Error: Las fechas proporcionadas no son válidas.";
+            }
+            $fechaEntradaFormateada = $fechaEntradaObj->format('d/m/Y');
+            $fechaSalidaFormateada = $fechaSalidaObj->format('d/m/Y');
+        
             $nuevaReserva = [
                 "id" => $reservaID,
                 "numeroCliente" => $numeroCliente,
                 "tipoCliente" => $tipoCliente,
-                "fechaEntrada" => $fechaEntrada,
-                "fechaSalida" => $fechaSalida,
+                "fechaEntrada" => $fechaEntradaFormateada,
+                "fechaSalida" => $fechaSalidaFormateada,
                 "tipoHabitacion" => $tipoHabitacion,
                 "total" => $total,
             ];
@@ -140,5 +149,57 @@ class Reserva
             return 'Error: La reserva no existe.';
         }
     }
+    public function getReservasByCliente($numeroCliente)
+    {
+        $reservasBuscadas = [];
+        foreach ($this->reservas as $reserva) {
+            if ($reserva['numeroCliente'] == $numeroCliente) {
+                $reservasBuscadas[] = $reserva;
+            }
+        }
+        return $reservasBuscadas;
+    }
+
+    public function getReservasByTipoHabitacion($tipoHabitacion)
+    {
+        $reservasBuscadas = [];
+        foreach ($this->reservas as $reserva) {
+            if ($reserva['tipoHabitacion'] == $tipoHabitacion) {
+                $reservasBuscadas[] = $reserva;
+            }
+        }
+        return $reservasBuscadas;
+    }
+    public function ordenarPorFecha(&$reservas)
+    {
+        usort($reservas, function ($a, $b) {
+            return strtotime($a['fechaEntrada']) - strtotime($b['fechaEntrada']);
+        });
+    }
+    
+    public function getReservasByFechas($fechaInicio, $fechaFin)
+    {
+        $reservasBuscadas = [];
+        foreach ($this->reservas as $reserva) {
+            if (($fechaInicio) <= $reserva['fechaEntrada'] && $fechaFin >= $reserva['fechaSalida']) {
+                $reservasBuscadas[] = $reserva;
+            }
+        }
+        $this->ordenarPorFecha($reservasBuscadas);
+        return $reservasBuscadas;
+    }
+    // public function getImporte($tipoHabitacion, $fecha = date('Y-m-d', strtotime('-1 day')))
+    // {
+    //     $totalImporte = 0;
+
+    //     foreach ($this->reservas as $reserva) {
+    //         if ($reserva['tipoHabitacion'] == $tipoHabitacion) {
+    //             if ($fecha >= $reserva['fechaEntrada'] && $fecha <= $reserva['fechaSalida']) {
+    //                 $totalImporte += $reserva['total'];
+    //             }
+    //         }
+    //     }
+    //     return $totalImporte;
+    // }
 }
 ?>

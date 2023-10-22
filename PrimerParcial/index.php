@@ -6,6 +6,9 @@ switch ($_SERVER['REQUEST_METHOD']) {
     case 'PUT':
         include('ModificarCliente.php');
         break;
+    case 'GET':
+        include('ConsultaReservas.php');
+        break;
     default:
         echo 'Método no permitido';
         break;

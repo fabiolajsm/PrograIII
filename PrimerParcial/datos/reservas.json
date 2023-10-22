@@ -4,10 +4,8 @@
     "numeroCliente": "2",
     "tipoCliente": "individual",
     "fechaEntrada": "12/12/2023",
-    "fechaSalida": "11/12/2024",
+    "fechaSalida": "12/11/2024",
     "tipoHabitacion": "Simple",
-    "total": "100",
-    "cancelada": true,
-    "ajustada": true
+    "total": "100"
   }
 ]
