@@ -86,5 +86,22 @@ class Cliente
             return "No existen clientes registrados.";
         }
     }
+    public function modificar($datos)
+    {
+        $numeroCliente = $datos["numeroCliente"];
+        $tipo = $datos["tipo"];
+
+        if (!empty($this->clientes)) {
+            foreach ($this->clientes as $cliente) {
+                if ($cliente["id"] == $numeroCliente && $cliente["tipo"] == $tipo) {
+                    foreach ($datos as $key => $value) {
+                        $cliente[$key] = $value;
+                    }
+                    return 'Modificacion exitosa.';
+                }
+            }
+        }
+        return 'Error: No existe el cliente que intenta modificar.';
+    }
 }
 ?>
