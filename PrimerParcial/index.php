@@ -27,6 +27,9 @@ function handlePost()
         case 'cancelarReserva':
             include('CancelarReserva.php');
             break;
+        case 'ajusteReserva':
+            include('AjusteReserva.php');
+            break;
         default:
             echo 'Acción inválida';
             break;

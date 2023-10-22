@@ -109,5 +109,36 @@ class Reserva
             return 'Error: Cliente o reserva no encontrados.';
         }
     }
+    function ajustar($datos)
+    {
+        $idReserva = $datos['idReserva'];
+        $motivo = $datos['motivo'];
+        $reserva = $this->getReservaById($idReserva);
+
+        if ($reserva) {
+            $ajuste = [
+                "idReserva" => $idReserva,
+                "motivo" => $motivo
+            ];
+
+            $archivoAjustes = './datos/ajustes.json';
+            $manejadorAjustes = new ManejadorArchivos($archivoAjustes);
+            $ajustes = $manejadorAjustes->leer();
+            $ajustes[] = $ajuste;
+
+            if ($manejadorAjustes->guardar($ajustes)) {
+                $reserva["ajustada"] = true;
+                if ($this->actualizarReserva($reserva)) {
+                    return 'Ajuste registrado y reserva actualizada exitosamente.';
+                } else {
+                    return 'Ajuste registrado, pero error al actualizar la reserva.';
+                }
+            } else {
+                return 'Error al guardar el ajuste.';
+            }
+        } else {
+            return 'Error: La reserva no existe.';
+        }
+    }
 }
 ?>
