@@ -21,8 +21,12 @@ function handlePost()
         case 'consulta':
             include('ConsultarCliente.php');
             break;
+        case 'reservaHabitacion':
+            include('ReservaHabitacion.php');
+            break;
         default:
             echo 'Acción inválida';
+            break;
     }
 }
 ?>

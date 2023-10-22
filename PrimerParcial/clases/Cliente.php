@@ -1,5 +1,5 @@
 <?php
-require 'ManejadorArchivos.php';
+require_once 'ManejadorArchivos.php';
 
 class Cliente
 {
@@ -11,6 +11,16 @@ class Cliente
     {
         $this->manejadorArchivos = new ManejadorArchivos($this->archivoHoteles);
         $this->clientes = $this->manejadorArchivos->leer();
+    }
+
+    public function getClienteById($id)
+    {
+        foreach ($this->clientes as $cliente) {
+            if ($cliente['id'] == $id) {
+                return $cliente;
+            }
+        }
+        return null;
     }
 
     public function alta($datos)
@@ -58,12 +68,12 @@ class Cliente
             $carpetaImagenes = './datos/ImagenesDeClientes/2023/';
             $rutaImagen = $carpetaImagenes . strtoupper($imagenID) . '.jpg';
             if ($this->manejadorArchivos->subirImagen($rutaImagen)) {
-                return "Cliente registrado/actualizado exitosamente.";
+                return "Cliente registrado exitosamente.";
             } else {
-                return "Cliente registrado/actualizado exitosamente, pero hubo un problema al guardar la imagen.";
+                return "Cliente registrado exitosamente, pero hubo un problema al guardar la imagen.";
             }
         } else {
-            return "Error: No se pudo registrar u actualizar el cliente.";
+            return "Error: No se pudo registrar el cliente.";
         }
     }
     public function consultar($tipo, $nroCliente)
@@ -86,6 +96,7 @@ class Cliente
             return "No existen clientes registrados.";
         }
     }
+    //revisar
     public function modificar($datos)
     {
         $numeroCliente = $datos["numeroCliente"];
