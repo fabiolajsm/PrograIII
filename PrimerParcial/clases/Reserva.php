@@ -46,7 +46,7 @@ class Reserva
             }
             $fechaEntradaFormateada = $fechaEntradaObj->format('d-m-Y');
             $fechaSalidaFormateada = $fechaSalidaObj->format('d-m-Y');
-        
+
             $nuevaReserva = [
                 "id" => $reservaID,
                 "numeroCliente" => $numeroCliente,
@@ -149,20 +149,25 @@ class Reserva
             return 'Error: La reserva no existe.';
         }
     }
-/**a- El total de reservas (importe) por tipo de habitación 
- * y fecha en un día en particular (se envía por parámetro), 
- * si no se pasa fecha, se muestran las del día anterior. 
- * b- El listado de reservas para un cliente en particular. 
- * c- El listado de reservas entre dos fechas ordenado por fecha. 
- * d- El listado de reservas por tipo de habitación. 
- */
-    public function consultar($datos){
+    /**a- El total de reservas (importe) por tipo de habitación 
+     * y fecha en un día en particular (se envía por parámetro), 
+     * si no se pasa fecha, se muestran las del día anterior. 
+     * b- El listado de reservas para un cliente en particular. 
+     * c- El listado de reservas entre dos fechas ordenado por fecha. 
+     * d- El listado de reservas por tipo de habitación. 
+     */
+    public function consultar($datos)
+    {
         $tipoHabitacion = $datos["tipoHabitacion"];
         $fechaReserva = $datos["fechaReserva"];
-        if (!empty($_GET['fechaReserva']) && !strtotime($_GET['fechaReserva'])){
+        $numeroCliente = $datos["numeroCliente"];
+
+        if (!empty($_GET['fechaReserva']) && !strtotime($_GET['fechaReserva'])) {
             return 'Error: Fecha de reserva invalida';
         } else {
-            return 'A - Total de reservas(importe) por tipo de habitacion : ' . strval($this->getImporte($tipoHabitacion, $fechaReserva));
+            $puntoA = 'A - Total de reservas(importe) por tipo de habitacion : ' . strval($this->getImporte($tipoHabitacion, $fechaReserva));
+            $puntoB = 'B - Listado de reservas para cliente ' . $numeroCliente . ': ' . json_encode($this->getReservasByCliente($numeroCliente));
+            return $puntoA . ' - ' . $puntoB;
         }
     }
     private function getImporte($tipoHabitacion, $fecha)
@@ -204,7 +209,7 @@ class Reserva
             return strtotime($a['fechaEntrada']) - strtotime($b['fechaEntrada']);
         });
     }
-    
+
     public function getReservasByFechas($fechaInicio, $fechaFin)
     {
         $reservasBuscadas = [];
