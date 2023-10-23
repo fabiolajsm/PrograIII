@@ -14,7 +14,7 @@ if ($_POST['tipoHabitacion'] !== "Simple" && $_POST['tipoHabitacion'] !== "Doble
     return;
 }
 if (!strtotime($_POST['fechaEntrada']) || !strtotime($_POST['fechaSalida']) || strtotime($_POST['fechaEntrada']) > strtotime($_POST['fechaSalida'])) {
-    echo "Fechas de entrada y salida no válidas. Asegúrese de que sean fechas válidas y que la fecha de entrada sea anterior a la fecha de salida.";
+    echo "Fechas de entrada y salida no válidas. Asegúrese de que sean fechas válidas y que la fecha de entrada sea anterior a la fecha de salida. (formato: DD-MM-AAAA, ejemplo: 12-10-2023)";
     return;
 }
 if (!is_numeric($_POST['total']) || $_POST['total'] <= 0) {

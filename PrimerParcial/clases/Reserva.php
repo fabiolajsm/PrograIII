@@ -44,8 +44,8 @@ class Reserva
             } catch (Exception $e) {
                 return "Error: Las fechas proporcionadas no son válidas.";
             }
-            $fechaEntradaFormateada = $fechaEntradaObj->format('d/m/Y');
-            $fechaSalidaFormateada = $fechaSalidaObj->format('d/m/Y');
+            $fechaEntradaFormateada = $fechaEntradaObj->format('d-m-Y');
+            $fechaSalidaFormateada = $fechaSalidaObj->format('d-m-Y');
         
             $nuevaReserva = [
                 "id" => $reservaID,
@@ -149,6 +149,34 @@ class Reserva
             return 'Error: La reserva no existe.';
         }
     }
+/**a- El total de reservas (importe) por tipo de habitación 
+ * y fecha en un día en particular (se envía por parámetro), 
+ * si no se pasa fecha, se muestran las del día anterior. 
+ * b- El listado de reservas para un cliente en particular. 
+ * c- El listado de reservas entre dos fechas ordenado por fecha. 
+ * d- El listado de reservas por tipo de habitación. 
+ */
+    public function consultar($datos){
+        $tipoHabitacion = $datos["tipoHabitacion"];
+        $fechaReserva = $datos["fechaReserva"];
+        if (!empty($_GET['fechaReserva']) && !strtotime($_GET['fechaReserva'])){
+            return 'Error: Fecha de reserva invalida';
+        } else {
+            return 'A - Total de reservas(importe) por tipo de habitacion : ' . strval($this->getImporte($tipoHabitacion, $fechaReserva));
+        }
+    }
+    private function getImporte($tipoHabitacion, $fecha)
+    {
+        $totalImporte = 0;
+        foreach ($this->reservas as $reserva) {
+            if ($reserva['tipoHabitacion'] == $tipoHabitacion) {
+                if ($fecha == $reserva['fechaEntrada'] || $fecha == $reserva['fechaSalida']) {
+                    $totalImporte += $reserva['total'];
+                }
+            }
+        }
+        return $totalImporte;
+    }
     public function getReservasByCliente($numeroCliente)
     {
         $reservasBuscadas = [];
@@ -188,18 +216,5 @@ class Reserva
         $this->ordenarPorFecha($reservasBuscadas);
         return $reservasBuscadas;
     }
-    // public function getImporte($tipoHabitacion, $fecha = date('Y-m-d', strtotime('-1 day')))
-    // {
-    //     $totalImporte = 0;
-
-    //     foreach ($this->reservas as $reserva) {
-    //         if ($reserva['tipoHabitacion'] == $tipoHabitacion) {
-    //             if ($fecha >= $reserva['fechaEntrada'] && $fecha <= $reserva['fechaSalida']) {
-    //                 $totalImporte += $reserva['total'];
-    //             }
-    //         }
-    //     }
-    //     return $totalImporte;
-    // }
 }
 ?>
