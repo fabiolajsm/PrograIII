@@ -78,9 +78,6 @@ class Reserva
             return "Error: El cliente no existe";
         }
     }
-    /**6- CancelarReserva.php: (por POST) se recibe el Tipo de Cliente, Nro de Cliente, y el Id de Reserva a cancelar.
-     *  Si el cliente existe en hoteles.json y la reserva en reservas.json, 
-     * se marca como cancelada en el registro de reservas. Si el cliente o la reserva no existen, informar el tipo de error.  */
     public function actualizarReserva($reservaActualizada)
     {
         $idReserva = $reservaActualizada['id'];
@@ -96,7 +93,6 @@ class Reserva
             return false;
         }
     }
-
     function cancelar($datos)
     {
         $numeroCliente = $datos["numeroCliente"];
@@ -122,21 +118,23 @@ class Reserva
     {
         $idReserva = $datos['idReserva'];
         $motivo = $datos['motivo'];
+        $ajuste = $datos['ajuste'];
         $reserva = $this->getReservaById($idReserva);
 
         if ($reserva) {
-            $ajuste = [
+            $datosAjuste = [
                 "idReserva" => $idReserva,
-                "motivo" => $motivo
+                "motivo" => $motivo,
+                "ajuste" => $ajuste
             ];
 
             $archivoAjustes = './datos/ajustes.json';
             $manejadorAjustes = new ManejadorArchivos($archivoAjustes);
             $ajustes = $manejadorAjustes->leer();
-            $ajustes[] = $ajuste;
+            $ajustes[] = $datosAjuste;
 
             if ($manejadorAjustes->guardar($ajustes)) {
-                $reserva["ajustada"] = true;
+                $reserva["total"] = $reserva["total"] + $ajuste;
                 if ($this->actualizarReserva($reserva)) {
                     return 'Ajuste registrado y reserva actualizada exitosamente.';
                 } else {
