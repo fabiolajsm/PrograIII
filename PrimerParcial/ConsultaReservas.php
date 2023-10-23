@@ -9,10 +9,6 @@ if ($_GET['tipoHabitacion'] !== "Simple" && $_GET['tipoHabitacion'] !== "Doble" 
     echo "Error: El Tipo de Habitacion debe ser 'Simple', 'Doble' o 'Suite'.";
     return;
 }
-if(empty($_GET['fechaReserva']) || !strtotime($_GET['fechaReserva'])){
-    echo 'Fecha de reserva invalida';
-    return;
-}
 if (!strtotime($_GET['fechaDesde']) || !strtotime($_GET['fechaHasta']) || strtotime($_GET['fechaDesde']) > strtotime($_GET['fechaHasta'])) {
     echo "Fechas de Desde y Hasta no válidas. Asegúrese de que sean fechas válidas y que la fecha Desde sea anterior a la fecha de Hasta. (formato: DD-MM-AAAA, ejemplo: 12-10-2023)";
     return;

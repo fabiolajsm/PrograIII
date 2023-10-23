@@ -149,25 +149,22 @@ class Reserva
             return 'Error: La reserva no existe.';
         }
     }
-    /**a- El total de reservas (importe) por tipo de habitación 
-     * y fecha en un día en particular (se envía por parámetro), 
-     * si no se pasa fecha, se muestran las del día anterior. 
-     * b- El listado de reservas para un cliente en particular. 
-     * c- El listado de reservas entre dos fechas ordenado por fecha. 
-     * d- El listado de reservas por tipo de habitación. 
-     */
     public function consultar($datos)
     {
         $tipoHabitacion = $datos["tipoHabitacion"];
         $fechaReserva = $datos["fechaReserva"];
         $numeroCliente = $datos["numeroCliente"];
+        $fechaDesde = $datos["fechaDesde"];
+        $fechaHasta = $datos["fechaHasta"];
 
         if (!empty($_GET['fechaReserva']) && !strtotime($_GET['fechaReserva'])) {
             return 'Error: Fecha de reserva invalida';
         } else {
             $puntoA = 'A - Total de reservas(importe) por tipo de habitacion : ' . strval($this->getImporte($tipoHabitacion, $fechaReserva));
             $puntoB = 'B - Listado de reservas para cliente ' . $numeroCliente . ': ' . json_encode($this->getReservasByCliente($numeroCliente));
-            return $puntoA . ' - ' . $puntoB;
+            $puntoC = 'C - Listado de reservas entre dos fechas ordenado por fecha: ' . json_encode($this->getReservasByFechas($fechaDesde, $fechaHasta));
+            $puntoD = 'D - Listado de reservas por tipo de habitación: ' . json_encode($this->getReservasPorTipoHabitacion($tipoHabitacion));
+            return $puntoA . "\n" . $puntoB . "\n" . $puntoC . "\n" . $puntoD;
         }
     }
     private function getImporte($tipoHabitacion, $fecha)
@@ -192,7 +189,6 @@ class Reserva
         }
         return $reservasBuscadas;
     }
-
     public function getReservasByTipoHabitacion($tipoHabitacion)
     {
         $reservasBuscadas = [];
@@ -209,7 +205,6 @@ class Reserva
             return strtotime($a['fechaEntrada']) - strtotime($b['fechaEntrada']);
         });
     }
-
     public function getReservasByFechas($fechaInicio, $fechaFin)
     {
         $reservasBuscadas = [];
@@ -220,6 +215,16 @@ class Reserva
         }
         $this->ordenarPorFecha($reservasBuscadas);
         return $reservasBuscadas;
+    }
+    public function getReservasPorTipoHabitacion($tipoHabitacion)
+    {
+        $reservasPorTipo = [];
+        foreach ($this->reservas as $reserva) {
+            if ($reserva['tipoHabitacion'] == $tipoHabitacion) {
+                $reservasPorTipo[] = $reserva;
+            }
+        }
+        return $reservasPorTipo;
     }
 }
 ?>
