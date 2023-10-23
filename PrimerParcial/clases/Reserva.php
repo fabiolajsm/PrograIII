@@ -149,29 +149,37 @@ class Reserva
     }
     public function consultar($datos)
     {
+        if (empty($this->reservas))
+            return "No existen reservas";
         $tipoHabitacion = $datos["tipoHabitacion"];
         $fechaReserva = $datos["fechaReserva"];
         $numeroCliente = $datos["numeroCliente"];
         $fechaDesde = $datos["fechaDesde"];
         $fechaHasta = $datos["fechaHasta"];
 
-        if (!empty($_GET['fechaReserva']) && !strtotime($_GET['fechaReserva'])) {
-            return 'Error: Fecha de reserva invalida';
-        } else {
-            $puntoA = 'A - Total de reservas(importe) por tipo de habitacion : ' . strval($this->getImporte($tipoHabitacion, $fechaReserva));
-            $puntoB = 'B - Listado de reservas para cliente ' . $numeroCliente . ': ' . json_encode($this->getReservasByCliente($numeroCliente));
-            $puntoC = 'C - Listado de reservas entre dos fechas ordenado por fecha: ' . json_encode($this->getReservasByFechas($fechaDesde, $fechaHasta));
-            $puntoD = 'D - Listado de reservas por tipo de habitación: ' . json_encode($this->getReservasPorTipoHabitacion($tipoHabitacion));
-            return $puntoA . "\n" . $puntoB . "\n" . $puntoC . "\n" . $puntoD;
-        }
+        $puntoA = 'A - Total de reservas(importe) por tipo de habitacion : ' . strval($this->getImporte($tipoHabitacion, $fechaReserva));
+        $puntoB = 'B - Listado de reservas para cliente ' . $numeroCliente . ': ' . json_encode($this->getReservasByCliente($numeroCliente));
+        $puntoC = 'C - Listado de reservas entre dos fechas ordenado por fecha: ' . json_encode($this->getReservasByFechas($fechaDesde, $fechaHasta));
+        $puntoD = 'D - Listado de reservas por tipo de habitación: ' . json_encode($this->getReservasPorTipoHabitacion($tipoHabitacion));
+        return $puntoA . "\n" . $puntoB . "\n" . $puntoC . "\n" . $puntoD;
     }
     private function getImporte($tipoHabitacion, $fecha)
     {
         $totalImporte = 0;
+        if (!empty($fecha) && !strtotime($fecha)) {
+            return 'Error: Fecha de reserva inválida';
+        }
+        $hoy = date('Y-m-d'); // Obtener la fecha actual en formato 'YYYY-MM-DD'
+
         foreach ($this->reservas as $reserva) {
             if ($reserva['tipoHabitacion'] == $tipoHabitacion) {
                 if ($fecha == $reserva['fechaEntrada'] || $fecha == $reserva['fechaSalida']) {
                     $totalImporte += $reserva['total'];
+                }
+                if (empty($fecha)) {
+                    if (strtotime($reserva['fechaEntrada']) < strtotime($hoy) || strtotime($reserva['fechaSalida']) < strtotime($hoy)) {
+                        $totalImporte += $reserva['total'];
+                    }
                 }
             }
         }
