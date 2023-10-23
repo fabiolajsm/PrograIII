@@ -16,6 +16,9 @@ class Reserva
 
     public function getReservaById($id)
     {
+        if (empty($this->reservas)) {
+            return null;
+        }
         foreach ($this->reservas as $reserva) {
             if ($reserva['id'] == $id) {
                 return $reserva;
@@ -80,6 +83,9 @@ class Reserva
     }
     public function actualizarReserva($reservaActualizada)
     {
+        if (empty($this->reservas)) {
+            return "No existen reservas";
+        }
         $idReserva = $reservaActualizada['id'];
         foreach ($this->reservas as $clave => $reserva) {
             if ($reserva['id'] == $idReserva) {
@@ -95,6 +101,9 @@ class Reserva
     }
     function cancelar($datos)
     {
+        if (empty($this->reservas)) {
+            return "No existen reservas";
+        }
         $numeroCliente = $datos["numeroCliente"];
         $idReserva = $datos["idReserva"];
         $tipoCliente = $datos["tipoCliente"];
@@ -116,6 +125,9 @@ class Reserva
     }
     function ajustar($datos)
     {
+        if (empty($this->reservas)) {
+            return "No existen reservas";
+        }
         $idReserva = $datos['idReserva'];
         $motivo = $datos['motivo'];
         $ajuste = $datos['ajuste'];
@@ -149,8 +161,9 @@ class Reserva
     }
     public function consultar($datos)
     {
-        if (empty($this->reservas))
+        if (empty($this->reservas)) {
             return "No existen reservas";
+        }
         $tipoHabitacion = $datos["tipoHabitacion"];
         $fechaReserva = $datos["fechaReserva"];
         $numeroCliente = $datos["numeroCliente"];

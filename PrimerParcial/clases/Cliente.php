@@ -15,6 +15,9 @@ class Cliente
 
     public function getClienteById($id)
     {
+        if (empty($this->clientes)) {
+            return null;
+        }
         foreach ($this->clientes as $cliente) {
             if ($cliente['id'] == $id) {
                 return $cliente;
@@ -98,20 +101,22 @@ class Cliente
     }
     public function modificar($datos)
     {
+        if (empty($this->clientes)) {
+            return 'Error: No existen el clientes';
+        }
         $numeroCliente = $datos["numeroCliente"];
         $tipo = $datos["tipo"];
 
-        if (!empty($this->clientes)) {
-            foreach ($this->clientes as &$cliente) {
-                if ($cliente["id"] == $numeroCliente && $cliente["tipo"] == $tipo) {
-                    foreach ($datos as $key => $value) {
-                        if ($key !== "numeroCliente" && $key !== "id") {
-                            $cliente[$key] = $value;
-                        }
+        foreach ($this->clientes as &$cliente) {
+            if ($cliente["id"] == $numeroCliente && $cliente["tipo"] == $tipo) {
+                foreach ($datos as $key => $value) {
+                    if ($key !== "numeroCliente" && $key !== "id") {
+                        $cliente[$key] = $value;
                     }
                 }
             }
         }
+
         if ($this->manejadorArchivos->guardar($this->clientes)) {
             return 'Modificacion exitosa.';
         } else {
