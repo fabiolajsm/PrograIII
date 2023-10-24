@@ -178,13 +178,15 @@ f- El listado de Reservas por tipo de modalidad. */
         $fechaHasta = $datos["fechaHasta"];
 
         $puntoA = 'A - Total de reservas(importe) por tipo de habitacion : ' . strval($this->getImporte($tipoHabitacion, $fechaReserva, false));
-        $puntoB = 'B - Listado de reservas para cliente ' . $numeroCliente . ': ' . json_encode($this->getReservasByCliente($numeroCliente));
+        $puntoB = 'B - Listado de reservas para cliente ' . $numeroCliente . ': ' . json_encode($this->getReservasByCliente($numeroCliente, false));
         $puntoC = 'C - Listado de reservas entre dos fechas ordenado por fecha: ' . json_encode($this->getReservasByFechas($fechaDesde, $fechaHasta));
         $puntoD = 'D - Listado de reservas por tipo de habitación: ' . json_encode($this->getReservasPorTipoHabitacion($tipoHabitacion));
 
         $puntoE = 'E - El total cancelado (importe) por tipo de cliente y fecha en un día en particular: ' . strval($this->getImporte($tipoHabitacion, $fechaReserva, true));
+        $puntoF = 'F - Listado de cancelaciones para cliente ' . $numeroCliente . ': ' . json_encode($this->getReservasByCliente($numeroCliente, true));
+
         $parteUno = $puntoA . "\n" . $puntoB . "\n" . $puntoC . "\n" . $puntoD . "\n";
-        $parteDos = $puntoE . "\n";
+        $parteDos = $puntoE . "\n" . $puntoF;
         return $parteUno . $parteDos;
     }
     private function getImporte($tipoHabitacion, $fecha, $traerCancelados)
@@ -220,12 +222,18 @@ f- El listado de Reservas por tipo de modalidad. */
         }
         return $totalImporte;
     }
-    public function getReservasByCliente($numeroCliente)
+    public function getReservasByCliente($numeroCliente, $traerCanceladas)
     {
         $reservasBuscadas = [];
         foreach ($this->reservas as $reserva) {
-            if ($reserva['numeroCliente'] == $numeroCliente) {
-                $reservasBuscadas[] = $reserva;
+            if (!$traerCanceladas) {
+                if ($reserva['numeroCliente'] == $numeroCliente) {
+                    $reservasBuscadas[] = $reserva;
+                }
+            } else {
+                if ($reserva['numeroCliente'] == $numeroCliente && isset($reserva['cancelada'])) {
+                    $reservasBuscadas[] = $reserva;
+                }
             }
         }
         return $reservasBuscadas;
