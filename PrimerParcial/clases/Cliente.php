@@ -123,5 +123,52 @@ class Cliente
             return 'Error: No existe el cliente que intenta modificar.';
         }
     }
+    public function borrar($numeroCliente, $tipoCliente, $numeroDNI)
+    {
+        if (empty($this->clientes)) {
+            return "No existen clientes";
+        }
+        $clienteEncontrado = $this->getClienteById($numeroCliente);
+
+        if ($clienteEncontrado) {
+            $palabraCompletaTipoCliente = "INDIVIDUAL";
+            if ($tipoCliente != "INDI") {
+                $palabraCompletaTipoCliente = "CORPORATIVO";
+            }
+            if ($clienteEncontrado['nroDocumento'] !== $numeroDNI || $clienteEncontrado['tipo'] !== strtolower($palabraCompletaTipoCliente)) {
+                return 'Cliente no encontrado';
+            }
+            $idFormateado = str_pad($numeroCliente, 6, '0', STR_PAD_LEFT);
+            $nombreDeLaImagenCliente = $idFormateado . $palabraCompletaTipoCliente;
+            $imagenCliente = './datos/ImagenesDeClientes/2023/' . $nombreDeLaImagenCliente . '.jpg';
+            $carpetaRespaldo = './ImagenesBackupClientes/2023/';
+
+            $clienteEncontrado["borrado"] = true;
+            foreach ($this->clientes as $clave => $reserva) {
+                if ($clienteEncontrado['id'] == $numeroCliente) {
+                    $this->clientes[$clave] = $clienteEncontrado;
+                    $borradoExitoso = true;
+                    break;
+                }
+            }
+            if ($this->manejadorArchivos->guardar($this->clientes)) {
+                if (file_exists($imagenCliente)) {
+                    if (!file_exists($carpetaRespaldo)) {
+                        mkdir($carpetaRespaldo, 0777, true);
+                    }
+                    $nuevaRuta = $carpetaRespaldo . strtoupper($numeroCliente) . 'ELIMINADO' . '.jpg';
+                    if (rename($imagenCliente, $nuevaRuta)) {
+                        return 'Cliente borrado exitosamente.';
+                    }
+                } else {
+                    return "Cliente borrado exitosamente, pero hubo un problema al guardar la imagen";
+                }
+            } else {
+                return 'Error al borrar Cliente';
+            }
+        } else {
+            return "Error: Cliente no encontrado.";
+        }
+    }
 }
 ?>

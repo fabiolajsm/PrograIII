@@ -9,6 +9,9 @@ switch ($_SERVER['REQUEST_METHOD']) {
     case 'GET':
         include('ConsultaReservas.php');
         break;
+    case 'DELETE':
+        include('BorrarCliente.php');
+        break;
     default:
         echo 'Método no permitido';
         break;

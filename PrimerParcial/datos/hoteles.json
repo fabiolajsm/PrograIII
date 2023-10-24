@@ -4,12 +4,13 @@
     "nombre": "Lady",
     "apellido": "Gaga",
     "tipoDocumento": "123",
-    "nroDocumento": "3211",
+    "nroDocumento": "2222",
     "email": "gaga@gmail.com",
     "tipo": "corporativo",
     "pais": "Colombia",
     "ciudad": "Bogota",
-    "telefono": "11222222"
+    "telefono": "11222222",
+    "borrado": true
   },
   {
     "id": "000002",
