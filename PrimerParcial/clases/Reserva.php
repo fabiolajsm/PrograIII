@@ -159,6 +159,13 @@ class Reserva
             return 'Error: La reserva no existe.';
         }
     }
+    /**a- El total cancelado (importe) por tipo de cliente y fecha en un día en particular (se
+envía por parámetro), si no se pasa fecha, se muestran las del día anterior.
+b- El listado de cancelaciones para un cliente en particular.
+c- El listado de cancelaciones entre dos fechas ordenado por fecha.
+d- El listado de cancelaciones por tipo de cliente.
+e- El listado de todas las operaciones (reservas y cancelaciones) por usuario.
+f- El listado de Reservas por tipo de modalidad. */
     public function consultar($datos)
     {
         if (empty($this->reservas)) {
@@ -170,13 +177,17 @@ class Reserva
         $fechaDesde = $datos["fechaDesde"];
         $fechaHasta = $datos["fechaHasta"];
 
-        $puntoA = 'A - Total de reservas(importe) por tipo de habitacion : ' . strval($this->getImporte($tipoHabitacion, $fechaReserva));
+        $puntoA = 'A - Total de reservas(importe) por tipo de habitacion : ' . strval($this->getImporte($tipoHabitacion, $fechaReserva, false));
         $puntoB = 'B - Listado de reservas para cliente ' . $numeroCliente . ': ' . json_encode($this->getReservasByCliente($numeroCliente));
         $puntoC = 'C - Listado de reservas entre dos fechas ordenado por fecha: ' . json_encode($this->getReservasByFechas($fechaDesde, $fechaHasta));
         $puntoD = 'D - Listado de reservas por tipo de habitación: ' . json_encode($this->getReservasPorTipoHabitacion($tipoHabitacion));
-        return $puntoA . "\n" . $puntoB . "\n" . $puntoC . "\n" . $puntoD;
+
+        $puntoE = 'E - El total cancelado (importe) por tipo de cliente y fecha en un día en particular: ' . strval($this->getImporte($tipoHabitacion, $fechaReserva, true));
+        $parteUno = $puntoA . "\n" . $puntoB . "\n" . $puntoC . "\n" . $puntoD . "\n";
+        $parteDos = $puntoE . "\n";
+        return $parteUno . $parteDos;
     }
-    private function getImporte($tipoHabitacion, $fecha)
+    private function getImporte($tipoHabitacion, $fecha, $traerCancelados)
     {
         $totalImporte = 0;
         if (!empty($fecha) && !strtotime($fecha)) {
@@ -186,12 +197,23 @@ class Reserva
 
         foreach ($this->reservas as $reserva) {
             if ($reserva['tipoHabitacion'] == $tipoHabitacion) {
-                if ($fecha == $reserva['fechaEntrada'] || $fecha == $reserva['fechaSalida']) {
-                    $totalImporte += $reserva['total'];
-                }
-                if (empty($fecha)) {
-                    if (strtotime($reserva['fechaEntrada']) < strtotime($hoy) || strtotime($reserva['fechaSalida']) < strtotime($hoy)) {
+                if (!$traerCancelados) {
+                    if ($fecha == $reserva['fechaEntrada'] || $fecha == $reserva['fechaSalida']) {
                         $totalImporte += $reserva['total'];
+                    }
+                    if (empty($fecha)) {
+                        if (strtotime($reserva['fechaEntrada']) < strtotime($hoy) || strtotime($reserva['fechaSalida']) < strtotime($hoy)) {
+                            $totalImporte += $reserva['total'];
+                        }
+                    }
+                } else {
+                    if ($fecha == $reserva['fechaEntrada'] || $fecha == $reserva['fechaSalida'] && isset($reserva['cancelada'])) {
+                        $totalImporte += $reserva['total'];
+                    }
+                    if (empty($fecha) && isset($reserva['cancelada'])) {
+                        if (strtotime($reserva['fechaEntrada']) < strtotime($hoy) || strtotime($reserva['fechaSalida']) < strtotime($hoy)) {
+                            $totalImporte += $reserva['total'];
+                        }
                     }
                 }
             }
