@@ -5,8 +5,8 @@ if (empty($_POST['tipoCliente']) || empty($_POST['numeroCliente']) || empty($_PO
     echo "Error: tiene que ingresar todos los campos requeridos.";
     return;
 }
-if ($_POST['tipoCliente'] !== "individual" && $_POST['tipoCliente'] !== "corporativo") {
-    echo "Error: El Tipo de Cliente debe ser 'individual' o 'corporativo'.";
+if ($_POST['tipoCliente'] !== "INDI" && $_POST['tipoCliente'] !== "CORP") {
+    echo "Error: El Tipo de Cliente debe ser 'INDI' o 'corporativo'.";
     return;
 }
 $reserva = new Reserva();

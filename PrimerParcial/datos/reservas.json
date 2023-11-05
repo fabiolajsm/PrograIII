@@ -7,5 +7,33 @@
     "fechaSalida": "11-12-2024",
     "tipoHabitacion": "Simple",
     "total": 200
+  },
+  {
+    "id": 2,
+    "numeroCliente": "2",
+    "tipoCliente": "individual",
+    "fechaEntrada": "12-12-2023",
+    "fechaSalida": "11-12-2024",
+    "tipoHabitacion": "Simple",
+    "total": "1500"
+  },
+  {
+    "id": 3,
+    "numeroCliente": "3",
+    "tipoCliente": "individual",
+    "fechaEntrada": "12-12-2023",
+    "fechaSalida": "11-12-2024",
+    "tipoHabitacion": "Simple",
+    "total": "1500"
+  },
+  {
+    "id": 4,
+    "numeroCliente": "4",
+    "tipoCliente": "corporativo",
+    "fechaEntrada": "12-12-2023",
+    "fechaSalida": "11-12-2024",
+    "tipoHabitacion": "Simple",
+    "total": 3000,
+    "cancelada": true
   }
 ]

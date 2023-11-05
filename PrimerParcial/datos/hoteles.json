@@ -23,5 +23,29 @@
     "pais": "Colombia",
     "ciudad": "Bogota",
     "telefono": "11222222"
+  },
+  {
+    "id": "000003",
+    "nombre": "Prueba",
+    "apellido": "Parcial",
+    "tipoDocumento": "DNI",
+    "nroDocumento": "1234",
+    "email": "prueba@gmail.com",
+    "tipo": "INDI",
+    "pais": "Colombia",
+    "ciudad": "Bogota",
+    "telefono": "11222222"
+  },
+  {
+    "id": "000004",
+    "nombre": "Prueba2",
+    "apellido": "Parcial",
+    "tipoDocumento": "DNI",
+    "nroDocumento": "1234",
+    "email": "prueba@gmail.com",
+    "tipo": "CORP",
+    "pais": "Colombia",
+    "ciudad": "Bogota",
+    "telefono": "11222222"
   }
 ]
