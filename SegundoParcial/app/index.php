@@ -3,10 +3,11 @@
 error_reporting(-1);
 ini_set('display_errors', 1);
 
+require '../clases/UsuarioDAO.php';
+require_once '../clases/UsuarioController.php';
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
-use Slim\Routing\RouteCollectorProxy;
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -21,27 +22,23 @@ $app->addBodyParsingMiddleware();
 
 // Routes
 $app->get('[/]', function (Request $request, Response $response) {
-    $payload = json_encode(array('method' => 'GET', 'msg' => "Bienvenido a SlimFramework 2023"));
+    $payload = json_encode(array('method' => 'GET', 'msg' => "Bienvenido a mi primera chambaa"));
     $response->getBody()->write($payload);
     return $response->withHeader('Content-Type', 'application/json');
 });
 
-$app->get('/test', function (Request $request, Response $response) {
-    $payload = json_encode(array('method' => 'GET', 'msg' => "Bienvenido a SlimFramework 2023"));
-    $response->getBody()->write($payload);
-    return $response->withHeader('Content-Type', 'application/json');
+$pdo = new PDO('mysql:host=localhost;dbname=segundoparcial;charset=utf8', 'root', '', array(PDO::ATTR_EMULATE_PREPARES => false, PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION));
+$usuarioDAO = new UsuarioDAO($pdo);
+$usuarioController = new UsuarioController($usuarioDAO);
+
+$app->post('/usuarios', function (Request $request, Response $response, $args) use ($usuarioController) {
+    $request = $request->withParsedBody($request->getParsedBody());
+    return $usuarioController->crearUsuario($request, $response);
 });
 
-$app->post('[/]', function (Request $request, Response $response) {
-    $payload = json_encode(array('method' => 'POST', 'msg' => "Bienvenido a SlimFramework 2023"));
-    $response->getBody()->write($payload);
-    return $response->withHeader('Content-Type', 'application/json');
-});
-
-$app->post('/test', function (Request $request, Response $response) {
-    $payload = json_encode(array('method' => 'POST', 'msg' => "Bienvenido a SlimFramework 2023"));
-    $response->getBody()->write($payload);
-    return $response->withHeader('Content-Type', 'application/json');
+$app->get('/usuarios', function (Request $request, Response $response, $args) use ($usuarioController) {
+    return $usuarioController->listarUsuarios($response);
 });
 
 $app->run();
+?>
