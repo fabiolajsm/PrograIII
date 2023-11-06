@@ -9,6 +9,8 @@ require '../clases/ProductoDAO.php';
 require_once '../clases/ProductoController.php';
 require '../clases/MesasDAO.php';
 require_once '../clases/MesasController.php';
+require '../clases/PedidosDAO.php';
+require_once '../clases/PedidosController.php';
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
@@ -65,6 +67,17 @@ $app->post('/mesas', function (Request $request, Response $response) use ($mesas
 
 $app->get('/mesas', function (Request $request, Response $response) use ($mesasController) {
     return $mesasController->listarMesas($response);
+});
+
+$pedidosDAO = new PedidosDAO($pdo); 
+$pedidosController = new PedidosController($pedidosDAO); 
+$app->post('/pedidos', function (Request $request, Response $response) use ($pedidosController) {
+    $request = $request->withParsedBody($request->getParsedBody());
+    return $pedidosController->crearPedido($request, $response);
+});
+
+$app->get('/pedidos', function (Request $request, Response $response) use ($pedidosController) {
+    return $pedidosController->listarPedidos($response);
 });
 
 $app->run();
