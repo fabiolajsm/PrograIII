@@ -14,7 +14,7 @@ class PedidosDAO
         try {
             $ID = $this->generarCodigoUnico();
             $stmt = $this->pdo->prepare("INSERT INTO pedidos (ID, idCliente, codigoMesa, estado, tiempoEstimado, tiempoDeEntrega, fotoDeLaMesa) VALUES (?, ?, ?, ?, ?, ?, ?)");
-            $stmt->execute([$ID, $idCliente, $codigoMesa, $estado, $tiempoEstimado, $tiempoDeEntrega, $fotoDeLaMesa]);
+            $stmt->execute([$ID, $idCliente, $codigoMesa, $estado, $tiempoEstimado, $tiempoDeEntrega, mb_convert_encoding($fotoDeLaMesa, 'UTF-8')]);
             return $ID;
         } catch (PDOException $e) {
             echo 'Error al insertar pedido: ' . $e->getMessage();
@@ -54,6 +54,13 @@ class PedidosDAO
             $stmt = $this->pdo->prepare("SELECT * FROM pedidos");
             $stmt->execute();
             $pedidos = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            foreach ($pedidos as &$pedido) {
+                foreach ($pedido as $key => $value) {
+                    if (is_string($value) && !mb_check_encoding($value, 'UTF-8')) {
+                        $pedido[$key] = mb_convert_encoding($value, 'UTF-8', 'auto');
+                    }
+                }
+            }
             return $pedidos;
         } catch (PDOException $e) {
             echo 'Error al listar pedidos: ' . $e->getMessage();

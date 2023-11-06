@@ -22,8 +22,8 @@ class PedidosController
         $estado = $data['estado'] ?? "";
         $tiempoEstimado = $data['tiempoEstimado'] ?? "";
         $tiempoDeEntrega = $data['tiempoDeEntrega'] ?? null;
-        $fotoDeLaMesa = $data['fotoDeLaMesa'] ?? null;
-
+        $fotoDeLaMesa = $_FILES['fotoDeLaMesa']['tmp_name'] ?? null;
+        echo json_encode($_FILES['fotoDeLaMesa']) . ' file foto';
         if (empty($idCliente) || empty($codigoMesa) || empty($estado) || empty($tiempoEstimado)) {
             return $response->withStatus(400)->withJson(['error' => 'Completar datos obligatorios: idCliente, codigoMesa, estado y tiempoEstimado.']);
         }
@@ -47,17 +47,14 @@ class PedidosController
         if ($tiempoDeEntrega && !preg_match("/^\d+(min|h)$/", $tiempoDeEntrega)) {
             return $response->withStatus(400)->withJson(['error' => 'El tiempo de entrega debe tener el formato correcto, ej. 10min o 1h.']);
         }
-
         if ($fotoDeLaMesa !== null) {
-            $imageData = base64_decode($fotoDeLaMesa);
-            $imageType = exif_imagetype($imageData);
-
-            if ($imageType !== IMAGETYPE_JPEG && $imageType !== IMAGETYPE_PNG) {
-                return $response->withStatus(400)->withJson(['error' => 'La foto de la mesa debe ser un archivo JPG o PNG válido.']);
+            $imageType = $_FILES['fotoDeLaMesa']['type'];
+            if (stripos($imageType, 'jpg') === false && stripos($imageType, 'jpeg') === false) {
+                return $response->withStatus(400)->withJson(['error' => 'La foto de la mesa debe ser un archivo JPG o JPEG válido.']);
             }
         }
 
-        $idPedido = $this->pedidosDAO->crearPedido($idCliente, $codigoMesa, $estado, $tiempoEstimado, $tiempoDeEntrega, $fotoDeLaMesa);
+        $idPedido = $this->pedidosDAO->crearPedido($idCliente, $codigoMesa, $estado, $tiempoEstimado, $tiempoDeEntrega, file_get_contents($fotoDeLaMesa));
         if ($idPedido) {
             return $response->withStatus(201)->withJson(['message' => 'Pedido creado', 'id' => $idPedido]);
         } else {
